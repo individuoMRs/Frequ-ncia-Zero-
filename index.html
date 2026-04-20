@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Frequência Zero</title>
 
+<button id="btnStart" class="botao-audio" onclick="iniciarSistema()">
+>>> INICIAR TRANSMISSÃO
+</button>
+
+
 <style>
 body, html {
     margin: 0;
@@ -62,6 +67,15 @@ video {
     position: relative;
     z-index: 10;
 }
+
+.botao-audio {
+    transition: opacity 0.5s;
+}
+
+botao.style.opacity = "0";
+setTimeout(() => {
+    botao.style.display = "none";
+}, 500);
 
 /* 🖤 borda escura nas telas abertas */
 .tela:not(#home)::after {
@@ -269,16 +283,22 @@ function voltar() {
 
 // iniciar sistema
 function iniciarSistema() {
+
     const audio = document.getElementById("audioGlitch");
+
     const video = document.getElementById("bgVideo");
 
+    const botao = document.getElementById("btnStart");
+
     audio.volume = 0.5;
+
     audio.play();
 
     video.play().catch(() => {});
 
-    document.querySelector(".botao-audio").style.display = "none";
-}
+    // 🔥 some completamente
+
+    botao.style.display = "none";
 
 // garantir vídeo no iPhone
 document.addEventListener("DOMContentLoaded", () => {
