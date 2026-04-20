@@ -68,15 +68,6 @@ video {
     z-index: 10;
 }
 
-.botao-audio {
-    transition: opacity 0.5s;
-}
-
-botao.style.opacity = "0";
-setTimeout(() => {
-    botao.style.display = "none";
-}, 500);
-
 /* 🖤 borda escura nas telas abertas */
 .tela:not(#home)::after {
     content: "";
@@ -299,7 +290,7 @@ function iniciarSistema() {
     // 🔥 some completamente
 
     botao.style.display = "none";
-
+}
 // garantir vídeo no iPhone
 document.addEventListener("DOMContentLoaded", () => {
     const video = document.getElementById("bgVideo");
