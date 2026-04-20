@@ -273,13 +273,13 @@ function voltar() {
 }
 
 // iniciar sistema
+// iniciar sistema
+
 function iniciarSistema() {
 
     const audio = document.getElementById("audioGlitch");
 
     const video = document.getElementById("bgVideo");
-
-    const botao = document.getElementById("btnStart");
 
     audio.volume = 0.5;
 
@@ -287,9 +287,8 @@ function iniciarSistema() {
 
     video.play().catch(() => {});
 
-    // 🔥 some completamente
+    document.querySelector(".botao-audio").style.display = "none";
 
-    botao.style.display = "none";
 }
 // garantir vídeo no iPhone
 document.addEventListener("DOMContentLoaded", () => {
