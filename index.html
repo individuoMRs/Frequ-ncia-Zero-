@@ -13,7 +13,6 @@ body, html {
     font-family: Arial, sans-serif;
     color: white;
     overflow: hidden;
-    background: transparent;
 }
 
 /* vídeo fundo */
@@ -23,12 +22,6 @@ video {
     height: 100%;
     object-fit: cover;
     z-index: -100;
-}
-
-/* blur */
-.blur-ativo .tela:not(.ativa) {
-    filter: blur(6px) brightness(0.4);
-    transform: scale(0.98);
 }
 
 /* telas */
@@ -95,10 +88,40 @@ button:hover {
     color: white;
 }
 
-/* erro */
-.erro {
-    margin-top: 30%;
-    font-size: 1.5rem;
+/* caixa estilo terminal */
+.perfil-box {
+    max-width: 700px;
+    margin: 80px auto;
+    padding: 20px;
+    text-align: left;
+    line-height: 1.6;
+    border: 1px solid white;
+    background: rgba(0,0,0,0.6);
+    box-shadow: inset 0 0 20px rgba(255,255,255,0.2);
+}
+
+.perfil-box h2 {
+    border-bottom: 1px solid white;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* scroll */
+.scroll {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* loading animação */
+#textoLoading {
+    animation: piscar 1s infinite;
+}
+
+@keyframes piscar {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
 }
 
 /* história */
@@ -111,8 +134,6 @@ button:hover {
     max-width: 700px;
     margin: 80px auto;
     padding: 20px;
-    line-height: 1.8;
-    text-align: left;
     border: 1px solid white;
     background: rgba(0,0,0,0.4);
 }
@@ -141,7 +162,6 @@ button:hover {
     <div class="logo">FREQUÊNCIA ZERO</div>
 
     <button onclick="abrirTela('personagem')">Identificar Personagem</button>
-    <button onclick="abrirTela('elenco')">Elenco</button>
     <button onclick="abrirTela('historia')">História</button>
 </div>
 
@@ -165,35 +185,76 @@ button:hover {
 
 </div>
 
+<!-- LOADING -->
+<div id="loading" class="tela">
+
+    <div class="perfil-box">
+        <h2>SISTEMA</h2>
+
+        <div class="scroll">
+            <p id="textoLoading">
+                INICIANDO VARREDURA...<br><br>
+                LOCALIZANDO REGISTRO DO AGENTE...
+            </p>
+        </div>
+    </div>
+
+</div>
+
 <!-- PERFIL 1 -->
 <div id="perfil1" class="tela">
-    <h1>AGENTE MARLON</h1>
-    <p>Status: ATIVO</p>
-    <p>Acesso nível: ALPHA</p>
+
+    <div class="perfil-box">
+        <h2>AGENTE MARLON</h2>
+
+        <div class="scroll">
+            <!-- ✍️ ESCREVA A HISTÓRIA AQUI -->
+            <p>
+            Classificação: ALPHA<br><br>
+
+            Marlon foi um dos primeiros a perceber a falha...<br><br>
+
+            Ele encontrou sinais escondidos no sistema.<br><br>
+
+            Agora, ele sabe demais.
+            </p>
+        </div>
+    </div>
+
     <button onclick="voltar()"><<< VOLTAR</button>
+
 </div>
 
 <!-- PERFIL 2 -->
 <div id="perfil2" class="tela">
-    <h1>AGENTE VITÓRIA</h1>
-    <p>Status: DESCONHECIDO</p>
-    <p>Acesso nível: RESTRITO</p>
-    <button onclick="voltar()"><<< VOLTAR</button>
-</div>
 
-<!-- ELENCO -->
-<div id="elenco" class="tela">
-    <div class="erro">FALHA NA TRANSMISSÃO</div>
+    <div class="perfil-box">
+        <h2>AGENTE VITÓRIA</h2>
+
+        <div class="scroll">
+            <!-- ✍️ ESCREVA A HISTÓRIA AQUI -->
+            <p>
+            Classificação: RESTRITA<br><br>
+
+            Vitória desapareceu após acessar o sistema.<br><br>
+
+            Último sinal captado... incompleto.<br><br>
+
+            Status: ??? 
+            </p>
+        </div>
+    </div>
+
     <button onclick="voltar()"><<< VOLTAR</button>
+
 </div>
 
 <!-- HISTÓRIA -->
 <div id="historia" class="tela">
     <div class="historia-texto">
-        Um novo aplicativo se populariza entre 2024 e 2025...<br><br>
-        Uma infecção se espalha...<br><br>
-        O colégio se torna um campo de guerra...<br><br>
-        Alguém sobreviverá?
+        Um aplicativo se espalha.<br><br>
+        Uma infecção começa.<br><br>
+        O mundo muda para sempre.
     </div>
 
     <button onclick="voltar()"><<< RETORNAR</button>
@@ -203,15 +264,8 @@ button:hover {
 
 // trocar telas
 function abrirTela(id) {
-
     document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
     document.getElementById(id).classList.add('ativa');
-
-    if (id !== 'home') {
-        document.body.classList.add('blur-ativo');
-    } else {
-        document.body.classList.remove('blur-ativo');
-    }
 }
 
 // voltar
@@ -221,18 +275,11 @@ function voltar() {
 
 // iniciar sistema
 function iniciarSistema() {
-    const audio = document.getElementById("audioGlitch");
-    const video = document.getElementById("bgVideo");
-
-    audio.volume = 0.5;
-    audio.play();
-
-    video.play().catch(()=>{});
-
+    document.getElementById("audioGlitch").play();
     document.querySelector(".botao-audio").style.display = "none";
 }
 
-// LOGIN (⚠️ simples)
+// LOGIN
 const perfis = [
     { nome: "marlon", senha: "1234", destino: "perfil1" },
     { nome: "vitoria", senha: "abcd", destino: "perfil2" }
@@ -246,16 +293,20 @@ function logar() {
     const perfil = perfis.find(p => p.nome === nome && p.senha === senha);
 
     if (perfil) {
-        abrirTela(perfil.destino);
-    } else {
-        document.getElementById("erroLogin").style.display = "block";
-    }
-}
 
-// autoplay iPhone fix
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("bgVideo").play().catch(()=>{});
-});
+        abrirTela("loading");
+
+        setTimeout(() => {
+            abrirTela(perfil.destino);
+        }, 2500);
+
+    } else {
+
+        document.getElementById("erroLogin").style.display = "block";
+
+    }
+
+}
 
 </script>
 
