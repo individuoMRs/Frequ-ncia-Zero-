@@ -308,6 +308,15 @@ button:hover {
 
 // trocar telas
 function abrirTela(id) {
+// 🔥 reseta erro de login ao trocar de tela
+    const erro = document.getElementById("erroLogin");
+    if (erro) {
+        erro.style.display = "none";
+        if (timerErro) { clearTimeout(timerErro); timerErro = null; }
+    }
+
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+    // ... resto do código igual
 
     document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
 
@@ -343,23 +352,29 @@ const perfis = [
     { nome: "vitoria", senha: "abcd", destino: "perfil2" }
 ];
 
-function logar() {
+let timerErro = null; // 🔥 guarda o timer
 
+function logar() {
     const nome = document.getElementById("nome").value.toLowerCase();
     const senha = document.getElementById("senha").value;
-
     const perfil = perfis.find(p => p.nome === nome && p.senha === senha);
 
     if (perfil) {
-
         abrirTela("loading");
-
         setTimeout(() => {
             abrirTela(perfil.destino);
         }, 2000);
-
     } else {
-        document.getElementById("erroLogin").style.display = "block";
+        const erro = document.getElementById("erroLogin");
+        erro.style.display = "block";
+
+        // 🔥 cancela timer anterior se existir
+        if (timerErro) clearTimeout(timerErro);
+
+        // 🔥 some após 3 segundos
+        timerErro = setTimeout(() => {
+            erro.style.display = "none";
+        }, 3000);
     }
 }
 
