@@ -157,15 +157,29 @@ button:hover {
 /* história */
 #historia {
     overflow-y: auto;
-    padding: 40px 20px;
+    padding: 20px 0; /* 🔥 menos padding lateral */
+}
+
+.btn-voltar {
+    margin: 30px auto 60px;
+    display: block;
 }
 
 .historia-texto {
     max-width: 700px;
-    margin: 80px auto;
+    width: 90%; /* 🔥 responsivo */
+    
+    margin: 40px auto; /* 🔥 centraliza melhor */
     padding: 20px;
+
+    line-height: 1.8;
+    text-align: left;
+    font-size: 1.1rem;
+
     border: 1px solid white;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.5);
+
+    box-sizing: border-box; /* 🔥 evita corte */
 }
 </style>
 </head>
@@ -294,13 +308,19 @@ button:hover {
 
 // trocar telas
 function abrirTela(id) {
+
     document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+
     document.getElementById(id).classList.add('ativa');
+
+    const botaoAudio = document.querySelector(".botao-audio");
 
     if (id !== 'home') {
         document.body.classList.add('blur-ativo');
+        botaoAudio.style.display = "none"; // 🔥 ESCONDE
     } else {
         document.body.classList.remove('blur-ativo');
+        botaoAudio.style.display = "block"; // 🔥 MOSTRA só no início
     }
 }
 
