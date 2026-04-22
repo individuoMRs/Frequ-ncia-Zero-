@@ -90,9 +90,98 @@ button:hover {
 
 /* botão iniciar */
 .botao-audio {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+
+    padding: 15px 25px;
+
+    border: 1px solid white;
+
+    background: transparent;
+
+    color: white;
+
+    cursor: pointer;
+
+}
+
+.botao-audio:hover {
+
+    background: white;
+
+    color: black;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- 🔊 ÁUDIO DO SITE -->
+
+<audio id="audioGlitch" loop preload="auto">
+
+    <source src="001.mp3" type="audio/mpeg">
+
+</audio>
+
+<!-- 🔘 BOTÃO -->
+
+<button class="botao-audio" onclick="iniciarSistema()">
+
+>>> INICIAR TRANSMISSÃO
+
+</button>
+
+<script>
+
+const audio = document.getElementById("audioGlitch");
+
+/* 🔥 FUNÇÃO PRINCIPAL */
+
+function iniciarSistema() {
+
+    audio.volume = 0.5;
+
+    // tenta tocar
+
+    audio.play().then(() => {
+
+        console.log("Áudio iniciado");
+
+    }).catch(() => {
+
+        // 🔥 fallback iPhone
+
+        const unlock = () => {
+
+            audio.play();
+
+            document.removeEventListener("touchstart", unlock);
+
+            document.removeEventListener("click", unlock);
+
+        };
+
+        document.addEventListener("touchstart", unlock);
+
+        document.addEventListener("click", unlock);
+
+    });
+
+    // esconde botão
+
+    document.querySelector(".botao-audio").style.display = "none";
+
+}
+
+/* 🔥 GARANTE QUE O ÁUDIO CARREGUE */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    audio.load();
+
+})
 }
 
 /* erro */
