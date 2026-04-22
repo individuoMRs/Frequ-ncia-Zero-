@@ -25,6 +25,20 @@ video {
     z-index: -100;
 }
 
+<!-- 🔊 áudio -->
+
+<audio id="audioGlitch" loop>
+
+    <source src="001.mp3">
+
+</audio>
+
+<button class="botao-audio" onclick="iniciarSistema()">
+
+>>> INICIAR TRANSMISSÃO
+
+</button>
+
 /* 🎭 blur e escurecer fundo */
 .blur-ativo .tela:not(.ativa) {
     filter: blur(6px) brightness(0.4);
@@ -305,38 +319,6 @@ button:hover {
 </div>
 
 <script>
-
-<!-- 🔊 áudio -->
-
-<audio id="audioGlitch" loop>
-
-    <source src="001.mp3">
-
-</audio>
-
-<button class="botao-audio" onclick="iniciarSistema()">
-
->>> INICIAR TRANSMISSÃO
-
-</button>
-
-<!-- HOME -->
-
-<div id="home" class="tela ativa">
-
-    <div class="painel central">
-
-        <div class="logo">FREQUÊNCIA ZERO</div>
-
-        <button onclick="abrirTela('personagem')">Identificar Personagem</button>
-
-        <button onclick="abrirTela('elenco')">Elenco</button>
-
-        <button onclick="abrirTela('historia')">História</button>
-
-    </div>
-
-</div>
 
 // trocar telas
 function abrirTela(id) {
