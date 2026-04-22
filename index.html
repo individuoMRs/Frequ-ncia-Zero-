@@ -13,78 +13,68 @@ body, html {
     font-family: Arial, sans-serif;
     color: white;
     overflow: hidden;
-    background: transparent;
 }
 
-/* 🎥 vídeo fundo */
-video {
-    position: fixed;
+/* 🔥 LAYOUT DIVIDIDO */
+.painel {
+    display: flex;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    z-index: -100;
 }
 
-/* 🎭 blur e escurecer fundo */
-.blur-ativo .tela:not(.ativa) {
-    filter: blur(6px) brightness(0.4);
-    transform: scale(0.98);
-    transition: 0.3s;
+/* 🖤 LADO ESCURO (UI) */
+.lado-esquerdo {
+    width: 40%;
+    background: linear-gradient(to right, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    box-sizing: border-box;
 }
 
-/* borda escura */
-.tela:not(#home)::after {
+/* 🖼️ LADO IMAGEM */
+.lado-direito {
+    position: relative;
+    width: 60%;
+    background: url('02.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+/* 🔥 CAMADA ESCURA POR CIMA */
+.lado-direito::after {
     content: "";
-    position: absolute; /* 🔥 muda de fixed → absolute */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
 
-    box-shadow: inset 0 0 120px rgba(0,0,0,0.9); /* mais forte */
-    
+    background: linear-gradient(
+        to left,
+        rgba(0,0,0,0.2),
+        rgba(0,0,0,0.7)
+    );
+
     pointer-events: none;
-    z-index: 1; /* 🔥 garante camada correta */
-}
-.tela {
-    display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-
-    overflow: hidden; /* 🔥 impede vazamento da sombra */
 }
 
-/* telas */
-.tela {
-    display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    text-align: center;
+
+/* 🎭 blur fundo */
+.blur-ativo .lado-direito {
+    filter: blur(6px) brightness(0.5);
 }
 
-.tela.ativa {
-    display: block;
-}
-
-/* home */
-#home {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-/* logo */
+/* LOGO */
 .logo {
-    font-size: 2.5rem;
+    font-size: 2rem;
     letter-spacing: 6px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
-/* botões */
+/* BOTÕES */
 button {
     margin: 10px;
     padding: 10px 20px;
@@ -92,6 +82,7 @@ button {
     border: 1px solid white;
     color: white;
     cursor: pointer;
+    width: 220px;
 }
 
 button:hover {
@@ -99,25 +90,17 @@ button:hover {
     color: black;
 }
 
-/* botão iniciar */
-.botao-audio {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+/* TELAS */
+.tela {
+    display: none;
+    width: 100%;
 }
 
-/* erro */
-.erro {
-    margin-top: 30%;
-    font-size: 1.5rem;
-    opacity: 0.7;
+.tela.ativa {
+    display: block;
 }
 
-/* login */
-.login-box {
-    margin-top: 25%;
-}
-
+/* LOGIN */
 .login-box input {
     display: block;
     margin: 10px auto;
@@ -125,81 +108,50 @@ button:hover {
     background: black;
     border: 1px solid white;
     color: white;
+    width: 200px;
 }
 
-/* perfil */
+/* PERFIL */
 .perfil-box {
-    max-width: 700px;
-    margin: 80px auto;
-    padding: 20px;
-    text-align: left;
     border: 1px solid white;
+    padding: 15px;
     background: rgba(0,0,0,0.6);
-    box-shadow: inset 0 0 20px rgba(255,255,255,0.2);
+    width: 90%;
+    max-width: 400px;
 }
 
 .scroll {
-    max-height: 300px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
-/* loading */
+/* HISTÓRIA */
+.historia-texto {
+    border: 1px solid white;
+    padding: 15px;
+    background: rgba(0,0,0,0.6);
+    width: 90%;
+    max-width: 400px;
+    text-align: left;
+}
+
+/* LOADING */
 #textoLoading {
     animation: piscar 1s infinite;
 }
 
 @keyframes piscar {
-    0% {opacity:1;}
     50% {opacity:0.3;}
-    100% {opacity:1;}
-}
-
-/* história */
-#historia {
-    overflow-y: auto;
-    padding: 20px 0; /* 🔥 menos padding lateral */
-}
-
-.btn-voltar {
-    margin: 30px auto 60px;
-    display: block;
-}
-
-.historia-texto {
-    max-width: 700px;
-    width: 90%; /* 🔥 responsivo */
-    
-    margin: 40px auto; /* 🔥 centraliza melhor */
-    padding: 20px;
-
-    line-height: 1.8;
-    text-align: left;
-    font-size: 1.1rem;
-
-    border: 1px solid white;
-    background: rgba(0,0,0,0.5);
-
-    box-sizing: border-box; /* 🔥 evita corte */
 }
 </style>
 </head>
 
 <body>
 
-<!-- vídeo -->
-<video autoplay muted loop playsinline id="bgVideo">
-    <source src="01.mp4" type="video/mp4">
-</video>
+<div class="painel">
 
-<!-- áudio -->
-<audio id="audioGlitch" loop>
-    <source src="001.mp3">
-</audio>
-
-<!-- botão iniciar -->
-<button class="botao-audio" onclick="iniciarSistema()">
->>> INICIAR TRANSMISSÃO
-</button>
+<!-- 🖤 ESQUERDA -->
+<div class="lado-esquerdo">
 
 <!-- HOME -->
 <div id="home" class="tela ativa">
@@ -212,14 +164,13 @@ button:hover {
 
 <!-- LOGIN -->
 <div id="personagem" class="tela">
-
     <div class="login-box">
-        <h2>IDENTIFICAÇÃO NECESSÁRIA</h2>
+        <h2>ACESSO</h2>
 
         <input type="text" id="nome" placeholder="Nome">
         <input type="password" id="senha" placeholder="Senha">
 
-        <button onclick="logar()">ACESSAR</button>
+        <button onclick="logar()">ENTRAR</button>
 
         <p id="erroLogin" style="display:none;color:red;">
             ACESSO NEGADO
@@ -231,51 +182,47 @@ button:hover {
 
 <!-- ELENCO -->
 <div id="elenco" class="tela">
-    <div class="erro">
-        FALHA NA TRANSMISSÃO...<br><br>
-        AGUARDE ATUALIZAÇÃO DO SISTEMA
+    <div class="perfil-box">
+        <p>FALHA NA TRANSMISSÃO...</p>
+        <p>AGUARDE ATUALIZAÇÃO DO SISTEMA</p>
     </div>
+
     <button onclick="voltar()"><<< VOLTAR</button>
 </div>
 
 <!-- LOADING -->
 <div id="loading" class="tela">
     <div class="perfil-box">
-        <h2>SISTEMA</h2>
-        <div class="scroll">
-            <p id="textoLoading">
-                INICIANDO VARREDURA...<br><br>
-                LOCALIZANDO REGISTRO DO PERSONAGEM, POR FAVOR AGUARDE...
-            </p>
-        </div>
+        <p id="textoLoading">
+            BUSCANDO ACESSO...<br><br>
+            AGUARDE...
+        </p>
     </div>
 </div>
 
 <!-- PERFIL 1 -->
 <div id="perfil1" class="tela">
     <div class="perfil-box">
-        <h2>ADM01</h2>
+        <h2>PERSONAGEM 01</h2>
         <div class="scroll">
-            <!-- ESCREVA AQUI -->
-            <p>
-            Teste de sistema, teste de sistema, teste de sistema...
-            </p>
+            <!-- 🔥 ESCREVA AQUI -->
+            História do personagem aqui...
         </div>
     </div>
+
     <button onclick="voltar()"><<< VOLTAR</button>
 </div>
 
 <!-- PERFIL 2 -->
 <div id="perfil2" class="tela">
     <div class="perfil-box">
-        <h2>ADM02</h2>
+        <h2>PERSONAGEM 02</h2>
         <div class="scroll">
-            <!-- ESCREVA AQUI -->
-            <p>
-            Teste de sistema, teste de sistema, teste de sistema...
-            </p>
+            <!-- 🔥 ESCREVA AQUI -->
+            História do personagem aqui...
         </div>
     </div>
+
     <button onclick="voltar()"><<< VOLTAR</button>
 </div>
 
@@ -287,63 +234,37 @@ button:hover {
 
         No período letivo de 2026, uma “bomba explode”.<br><br>
 
-        Uma nova infecção se espalha rapidamente, contaminando adultos e jovens de todo o país…<br>
-        E talvez do mundo inteiro?<br><br>
-
-        O colégio se torna um campo de guerra.<br>
-        Disputas entre os próprios estudantes… e contaminados altamente agressivos.<br><br>
-
-        Mas como começa essa infecção?<br>
-        Como resolver?<br>
-        Alguém ficará vivo?<br><br>
-
-        Algo poderá ser feito?
+        Uma nova infecção se espalha rapidamente...
 
     </div>
 
-    <button onclick="voltar()"><<< RETORNAR AO SINAL</button>
+    <button onclick="voltar()"><<< VOLTAR</button>
+</div>
+
+</div>
+
+<!-- 🖼️ DIREITA -->
+<div class="lado-direito"></div>
+
 </div>
 
 <script>
 
 // trocar telas
 function abrirTela(id) {
-// 🔥 reseta erro de login ao trocar de tela
-    const erro = document.getElementById("erroLogin");
-    if (erro) {
-        erro.style.display = "none";
-        if (timerErro) { clearTimeout(timerErro); timerErro = null; }
-    }
 
     document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
-    // ... resto do código igual
-
-    document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
-
     document.getElementById(id).classList.add('ativa');
-
-    const botaoAudio = document.querySelector(".botao-audio");
 
     if (id !== 'home') {
         document.body.classList.add('blur-ativo');
-        botaoAudio.style.display = "none"; // 🔥 ESCONDE
     } else {
         document.body.classList.remove('blur-ativo');
-        botaoAudio.style.display = "block"; // 🔥 MOSTRA só no início
     }
 }
 
-// voltar
 function voltar() {
     abrirTela('home');
-}
-
-// iniciar sistema
-function iniciarSistema() {
-    const audio = document.getElementById("audioGlitch");
-    audio.volume = 0.5;
-    audio.play();
-    document.querySelector(".botao-audio").style.display = "none";
 }
 
 // LOGIN
@@ -352,29 +273,21 @@ const perfis = [
     { nome: "adm02", senha: "abcd", destino: "perfil2" }
 ];
 
-let timerErro = null; // 🔥 guarda o timer
-
 function logar() {
     const nome = document.getElementById("nome").value.toLowerCase();
     const senha = document.getElementById("senha").value;
+
     const perfil = perfis.find(p => p.nome === nome && p.senha === senha);
 
     if (perfil) {
         abrirTela("loading");
+
         setTimeout(() => {
             abrirTela(perfil.destino);
         }, 2000);
+
     } else {
-        const erro = document.getElementById("erroLogin");
-        erro.style.display = "block";
-
-        // 🔥 cancela timer anterior se existir
-        if (timerErro) clearTimeout(timerErro);
-
-        // 🔥 some após 3 segundos
-        timerErro = setTimeout(() => {
-            erro.style.display = "none";
-        }, 3000);
+        document.getElementById("erroLogin").style.display = "block";
     }
 }
 
