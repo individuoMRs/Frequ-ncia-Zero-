@@ -188,10 +188,8 @@ button:hover {
 
 <!-- 🔊 áudio -->
 
-<audio id="audioGlitch" loop>
-
-    <source src="001.mp3">
-
+<audio id="audioGlitch" loop preload="auto">
+    <source src="001.mp3" type="audio/mpeg">
 </audio>
 
 <button class="botao-audio" onclick="iniciarSistema()">
@@ -355,9 +353,17 @@ function voltar() {
 // iniciar sistema
 function iniciarSistema() {
     const audio = document.getElementById("audioGlitch");
+    const botaoAudio = document.querySelector(".botao-audio");
+
     audio.volume = 0.5;
-    audio.play();
-    document.querySelector(".botao-audio").style.display = "none";
+    audio.load();
+
+    audio.play().then(() => {
+        botaoAudio.style.display = "none";
+    }).catch((erro) => {
+        console.log("Erro ao tocar o áudio:", erro);
+        alert("O áudio não iniciou. Verifique se o arquivo 001.mp3 está na pasta correta.");
+    });
 }
 
 // LOGIN
