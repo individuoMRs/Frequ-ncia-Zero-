@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frequência Zero</title>
+
+<style>
+
+/* 🔄 FORÇA MODO DEITADO */
+body {
+    transform: rotate(90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 0;
+    left: 100%;
+}
+
+/* RESET */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    background: black;
+}
+
+/* 🖼️ FUNDO IMAGEM */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background: 
+    linear-gradient(to right, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.1)),
+    url("02.jpg"); /* 🔥 TROQUE AQUI A IMAGEM */
+
+    background-size: cover;
+    background-position: center;
+    z-index: -10;
+}
+
+/* 🎭 telas */
+.tela {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.tela.ativa {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 🔥 joga pro lado escuro */
+}
+
+/* 🧱 container esquerdo (lado escuro) */
+.painel {
+    width: 40%;
+    min-width: 320px;
+    padding: 40px;
+}
+
+/* 📌 centralização interna */
+.central {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* logo */
+.logo {
+    font-size: 2.5rem;
+    letter-spacing: 6px;
+    margin-bottom: 30px;
+}
+
+/* botões */
+button {
+    margin: 10px 0;
+    padding: 12px;
+    width: 100%;
+
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: white;
+    color: black;
+}
+
+/* botão iniciar */
+.botao-audio {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+/* erro */
+.erro {
+    font-size: 1.3rem;
+    opacity: 0.7;
+}
+
+/* login */
+input {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    background: black;
+    border: 1px solid white;
+    color: white;
+}
+
+/* caixas (perfil / loading / história) */
+.box {
+    border: 1px solid white;
+    padding: 20px;
+    background: rgba(0,0,0,0.6);
+}
+
+.scroll {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+/* loading animação */
+#textoLoading {
+    animation: piscar 1s infinite;
+}
+
+@keyframes piscar {
+    0% {opacity:1;}
+    50% {opacity:0.3;}
+    100% {opacity:1;}
+}
+
+/* 📱 fallback (se não quiser rotacionar em telas muito pequenas) */
+@media (max-width: 600px) {
+    body {
+        transform: none;
+        width: 100%;
+        height: 100%;
+        position: static;
+    }
+
+    .tela.ativa {
+        justify-content: center;
+    }
+
+    .painel {
+        width: 90%;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- 🔊 áudio -->
+<audio id="audioGlitch" loop>
+    <source src="001.mp3">
+</audio>
+
+<button class="botao-audio" onclick="iniciarSistema()">
+>>> INICIAR TRANSMISSÃO
+</button>
+
+<!-- HOME -->
+<div id="home" class="tela ativa">
+    <div class="painel central">
+        <div class="logo">FREQUÊNCIA ZERO</div>
+
+        <button onclick="abrirTela('personagem')">Identificar Personagem</button>
+        <button onclick="abrirTela('elenco')">Elenco</button>
+        <button onclick="abrirTela('historia')">História</button>
+    </div>
+</div>
+
+<!-- LOGIN -->
+<div id="personagem" class="tela">
+    <div class="painel central">
+
+        <h2>IDENTIFICAÇÃO NECESSÁRIA</h2>
+
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="password" id="senha" placeholder="Senha">
+
+        <button onclick="logar()">ACESSAR</button>
+
+        <p id="erroLogin" style="display:none;color:red;">
+            ACESSO NEGADO
+        </p>
+
+        <button onclick="voltar()"><<< VOLTAR</button>
+
+    </div>
+</div>
+
+<!-- ELENCO -->
+<div id="elenco" class="tela">
+    <div class="painel central">
+
+        <div class="box">
+            <p class="erro">
+                FALHA NA TRANSMISSÃO...<br><br>
+                AGUARDE ATUALIZAÇÃO DO SISTEMA
+            </p>
+        </div>
+
+        <button onclick="voltar()"><<< VOLTAR</button>
+
+    </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading" class="tela">
+    <div class="painel central">
+
+        <div class="box">
+            <p id="textoLoading">
+                INICIANDO VARREDURA...<br><br>
+                LOCALIZANDO REGISTRO...
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- PERFIL -->
+<div id="perfil1" class="tela">
+    <div class="painel central">
+
+        <div class="box scroll">
+            <h2>ADM01</h2>
+
+            <!-- ESCREVA A HISTÓRIA AQUI -->
+            <p>Texto do personagem...</p>
+
+        </div>
+
+        <button onclick="voltar()"><<< VOLTAR</button>
+
+    </div>
+</div>
+
+<!-- HISTÓRIA -->
+<div id="historia" class="tela">
+    <div class="painel central">
+
+        <div class="box scroll">
+            <p>
+            Um novo aplicativo se populariza entre o final de 2024 e 2025...
+            </p>
+        </div>
+
+        <button onclick="voltar()"><<< VOLTAR</button>
+
+    </div>
+</div>
+
+<script>
+
+// trocar telas
+function abrirTela(id) {
+
+    const erro = document.getElementById("erroLogin");
+    if (erro) erro.style.display = "none";
+
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+    document.getElementById(id).classList.add('ativa');
+
+    const botao = document.querySelector(".botao-audio");
+
+    if (id !== 'home') {
+        botao.style.display = "none";
+    } else {
+        botao.style.display = "block";
+    }
+}
+
+// voltar
+function voltar() {
+    abrirTela('home');
+}
+
+// iniciar sistema
+function iniciarSistema() {
+    const audio = document.getElementById("audioGlitch");
+    audio.volume = 0.5;
+    audio.play();
+    document.querySelector(".botao-audio").style.display = "none";
+}
+
+// login
+const perfis = [
+    { nome: "adm01", senha: "1234", destino: "perfil1" }
+];
+
+function logar() {
+    const nome = document.getElementById("nome").value.toLowerCase();
+    const senha = document.getElementById("senha").value;
+
+    const perfil = perfis.find(p => p.nome === nome && p.senha === senha);
+
+    if (perfil) {
+        abrirTela("loading");
+
+        setTimeout(() => {
+            abrirTela(perfil.destino);
+        }, 2000);
+
+    } else {
+        document.getElementById("erroLogin").style.display = "block";
+    }
+}
+
+</script>
+
+</body>
+</html>
