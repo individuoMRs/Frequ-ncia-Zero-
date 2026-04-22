@@ -6,13 +6,59 @@
 <title>Frequência Zero</title>
 
 <style>
-body, html {
+body {
+
     margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: Arial, sans-serif;
+
+    height: 100vh;
+
+    font-family: Arial;
+
     color: white;
-    overflow: hidden;
+
+    background: url('02.jpg') no-repeat center center;
+
+    background-size: cover;
+
+}
+
+
+.caixa {
+    width: 90%;
+    max-width: 500px;
+
+    padding: 20px;
+
+    border: 1px solid white;
+    background: rgba(0,0,0,0.6);
+
+    backdrop-filter: blur(8px);
+
+    text-align: left;
+}
+
+/* 🔥 sombra suave cinematográfica */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background: radial-gradient(
+
+        circle at center,
+
+        rgba(0,0,0,0.3),
+
+        rgba(0,0,0,0.85)
+
+    );
+
+    z-index: -1;
+
 }
 
 /* 🔥 LAYOUT DIVIDIDO */
@@ -76,13 +122,17 @@ body, html {
 
 /* BOTÕES */
 button {
-    margin: 10px;
-    padding: 10px 20px;
+    margin-top: 15px;
+    padding: 12px 25px;
+
     background: transparent;
     border: 1px solid white;
     color: white;
+
     cursor: pointer;
-    width: 220px;
+    width: 250px;
+
+    transition: 0.2s;
 }
 
 button:hover {
@@ -92,12 +142,33 @@ button:hover {
 
 /* TELAS */
 .tela {
+
     display: none;
-    width: 100%;
+
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
 }
 
 .tela.ativa {
-    display: block;
+
+    display: flex;
+
 }
 
 /* LOGIN */
@@ -138,6 +209,23 @@ button:hover {
 /* LOADING */
 #textoLoading {
     animation: piscar 1s infinite;
+}
+
+@media (max-width: 768px) {
+
+    .logo {
+        font-size: 1.8rem;
+    }
+
+    button {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .caixa {
+        max-width: 90%;
+        font-size: 0.95rem;
+    }
 }
 
 @keyframes piscar {
@@ -192,7 +280,7 @@ button:hover {
 
 <!-- LOADING -->
 <div id="loading" class="tela">
-    <div class="perfil-box">
+    <div class="caixa">
         <p id="textoLoading">
             BUSCANDO ACESSO...<br><br>
             AGUARDE...
@@ -202,12 +290,13 @@ button:hover {
 
 <!-- PERFIL 1 -->
 <div id="perfil1" class="tela">
-    <div class="perfil-box">
-        <h2>PERSONAGEM 01</h2>
-        <div class="scroll">
-            <!-- 🔥 ESCREVA AQUI -->
-            História do personagem aqui...
-        </div>
+    <div class="caixa">
+
+        <h2>PERSONAGEM</h2>
+
+        <!-- ESCREVA AQUI -->
+        <p>História do personagem...</p>
+
     </div>
 
     <button onclick="voltar()"><<< VOLTAR</button>
@@ -215,12 +304,13 @@ button:hover {
 
 <!-- PERFIL 2 -->
 <div id="perfil2" class="tela">
-    <div class="perfil-box">
-        <h2>PERSONAGEM 02</h2>
-        <div class="scroll">
-            <!-- 🔥 ESCREVA AQUI -->
-            História do personagem aqui...
-        </div>
+    <div class="caixa">
+
+        <h2>PERSONAGEM</h2>
+
+        <!-- ESCREVA AQUI -->
+        <p>História do personagem...</p>
+
     </div>
 
     <button onclick="voltar()"><<< VOLTAR</button>
@@ -228,15 +318,17 @@ button:hover {
 
 <!-- HISTÓRIA -->
 <div id="historia" class="tela">
-    <div class="historia-texto">
+    <div class="caixa">
 
-        Um novo aplicativo se populariza entre o final de 2024 e 2025.<br><br>
-
-        No período letivo de 2026, uma “bomba explode”.<br><br>
-
-        Uma nova infecção se espalha rapidamente...
+        <!-- ESCREVA AQUI -->
+        <p>
+        Um novo aplicativo se populariza...
+        </p>
 
     </div>
+
+    <button onclick="voltar()"><<< VOLTAR</button>
+</div>
 
     <button onclick="voltar()"><<< VOLTAR</button>
 </div>
