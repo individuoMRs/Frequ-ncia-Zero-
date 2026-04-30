@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frequência Zero</title>
+
+<style>
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Courier New', monospace;
+    color: white;
+    overflow: hidden;
+    background: black;
+}
+
+/* vídeo fundo */
+video {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -100;
+}
+
+/* blur e escurecer fundo */
+.blur-ativo .tela:not(.ativa) {
+    filter: blur(6px) brightness(0.4);
+    transform: scale(0.98);
+    transition: 0.3s;
+}
+
+/* borda escura nas telas internas */
+.tela:not(#home)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 120px rgba(0,0,0,0.9);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* telas */
+.tela {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    overflow: hidden;
+}
+
+.tela.ativa {
+    display: block;
+}
+
+/* home */
+#home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* logo */
+.logo {
+    font-size: 2.5rem;
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* botões */
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background: white;
+    color: black;
+    transition: 0.2s;
+}
+
+/* botão iniciar transmissão (fixo no canto) */
+.botao-audio {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+}
+
+/* erro */
+.erro {
+    margin-top: 30%;
+    font-size: 1.5rem;
+    opacity: 0.7;
+}
+
+/* login */
+.login-box {
+    margin-top: 20%;
+}
+
+.login-box input {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    background: black;
+    border: 1px solid white;
+    color: white;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    width: 220px;
+}
+
+/* perfil */
+.perfil-box {
+    max-width: 700px;
+    margin: 80px auto;
+    padding: 20px;
+    text-align: left;
+    border: 1px solid white;
+    background: rgba(0,0,0,0.6);
+    box-shadow: inset 0 0 20px rgba(255,255,255,0.2);
+    position: relative;
+    z-index: 2;
+}
+
+.scroll {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* ==================== LOADING ==================== */
+#loading {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+}
+
+#loading.ativa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.loading-box {
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 40px 50px;
+    max-width: 600px;
+    width: 90%;
+    background: rgba(0,0,0,0.7);
+    box-shadow: inset 0 0 40px rgba(255,255,255,0.05);
+    position: relative;
+    z-index: 2;
+}
+
+.loading-titulo {
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    opacity: 0.5;
+    margin-bottom: 20px;
+}
+
+#textoLoading {
+    font-size: 0.95rem;
+    line-height: 2;
+    letter-spacing: 1px;
+    min-height: 120px;
+    text-align: left;
+}
+
+/* barra de progresso */
+.barra-container {
+    margin-top: 30px;
+    width: 100%;
+    height: 2px;
+    background: rgba(255,255,255,0.15);
+}
+
+.barra-progresso {
+    height: 100%;
+    width: 0%;
+    background: white;
+    transition: width 0.5s linear;
+}
+
+/* porcentagem */
+.porcentagem {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    letter-spacing: 2px;
+    text-align: right;
+}
+
+/* piscar cursor */
+@keyframes piscar {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.cursor {
+    display: inline-block;
+    animation: piscar 0.8s infinite;
+}
+
+/* ==================== TRANSMISSÕES ==================== */
+#transmissoes {
+    overflow-y: auto;
+    padding-bottom: 40px;
+}
+
+.card {
+    border: 1px solid white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 280px;
+    background: rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 2;
+}
+
+.card input {
+    width: 85%;
+    padding: 10px;
+    margin: 10px 0;
+    background: black;
+    border: 1px solid white;
+    color: white;
+    font-family: 'Courier New', monospace;
+}
+
+.card .erro-card {
+    color: red;
+    font-size: 0.8rem;
+    display: none;
+    letter-spacing: 1px;
+}
+
+.transmissoes-titulo {
+    margin-top: 40px;
+    letter-spacing: 6px;
+    font-size: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* vídeo player */
+.video-player {
+    width: 80%;
+    max-width: 600px;
+    margin: 50px auto;
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+
+/* história */
+#historia {
+    overflow-y: auto;
+    padding: 20px 0;
+}
+
+/* sombra fixa para a tela história (não rola com o conteúdo) */
+#historia::after {
+    position: fixed !important;
+}
+
+.historia-texto {
+    max-width: 700px;
+    width: 90%;
+    margin: 40px auto;
+    padding: 20px;
+    line-height: 1.8;
+    text-align: left;
+    font-size: 1.1rem;
+    border: 1px solid white;
+    background: rgba(0,0,0,0.5);
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+}
+
+.btn-voltar {
+    margin: 20px auto;
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- vídeo fundo -->
+
+<video autoplay muted loop playsinline id="bgVideo">
+    <source src="01.mp4" type="video/mp4">
+</video>
+
+<!-- áudio -->
+
+<audio id="audioGlitch" loop>
+    <source src="001.mp3">
+</audio>
+
+<!-- botão iniciar transmissão (substitui ambos os botões anteriores) -->
+
+<button class="botao-audio" id="btnIniciar" onclick="iniciarSistema()">
+    &gt;&gt;&gt; INICIAR TRANSMISSÃO
+</button>
+
+<!-- HOME -->
+
+<div id="home" class="tela ativa">
+    <div class="logo">FREQUÊNCIA ZERO</div>
+    <button onclick="abrirTela('personagem')">Identificar Personagem</button>
+    <button onclick="abrirTela('elenco')">Elenco</button>
+    <button onclick="abrirTela('historia')">História</button>
+    <button onclick="iniciarEnigmas()">Enigmas</button>
+</div>
+
+<!-- LOGIN -->
+
+<div id="personagem" class="tela">
+    <div class="login-box">
+        <h2 style="letter-spacing:4px;">IDENTIFICAÇÃO NECESSÁRIA</h2>
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="password" id="senha" placeholder="Senha">
+        <button onclick="logar()">ACESSAR</button>
+        <p id="erroLogin" style="display:none; color:red; letter-spacing:2px;">
+            ACESSO NEGADO
+        </p>
+    </div>
+    <button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; VOLTAR</button>
+</div>
+
+<!-- ELENCO -->
+
+<div id="elenco" class="tela">
+    <div class="erro">
+        FALHA NA TRANSMISSÃO...<br><br>
+        AGUARDE ATUALIZAÇÃO DO SISTEMA
+    </div>
+    <button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; VOLTAR</button>
+</div>
+
+<!-- LOADING (10 segundos) -->
+
+<div id="loading" class="tela">
+    <div class="loading-box">
+        <div class="loading-titulo">[ SISTEMA DE IDENTIFICAÇÃO ]</div>
+        <div id="textoLoading"></div>
+        <div class="barra-container">
+            <div class="barra-progresso" id="barraProgresso"></div>
+        </div>
+        <div class="porcentagem" id="porcentagemTexto">0%</div>
+    </div>
+</div>
+
+<!-- PERFIL 1 -->
+
+<div id="perfil1" class="tela">
+    <div class="perfil-box">
+        <h2 style="letter-spacing:4px;">ADM01</h2>
+        <div class="scroll">
+            <!-- ESCREVA AQUI -->
+            <p>Teste de sistema, teste de sistema, teste de sistema...</p>
+        </div>
+    </div>
+    <button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; VOLTAR</button>
+</div>
+
+<!-- PERFIL 2 -->
+
+<div id="perfil2" class="tela">
+    <div class="perfil-box">
+        <h2 style="letter-spacing:4px;">ADM02</h2>
+        <div class="scroll">
+            <!-- ESCREVA AQUI -->
+            <p>Teste de sistema, teste de sistema, teste de sistema...</p>
+        </div>
+    </div>
+    <button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; VOLTAR</button>
+</div>
+
+<!-- TRANSMISSÕES (abre ao clicar em INICIAR TRANSMISSÃO) -->
+
+<div id="transmissoes" class="tela">
+    <h1 class="transmissoes-titulo">TRANSMISSÕES</h1>
+
+```
+<div class="card">
+    <h3>Trailer</h3>
+    <input type="password" id="senha1" placeholder="Senha">
+    <button onclick="verificarVideo('senha1','1234','video1')">ACESSAR</button>
+    <p class="erro-card" id="erroCard1">Senha incorreta</p>
+</div>
+
+<div class="card">
+    <h3>????</h3>
+    <input type="password" id="senha2" placeholder="Senha">
+    <button onclick="verificarVideo('senha2','0000','video2')">ACESSAR</button>
+    <p class="erro-card" id="erroCard2">Senha incorreta</p>
+</div>
+
+<button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; VOLTAR</button>
+```
+
+</div>
+
+<!-- PLAYER 1 -->
+
+<div id="video1" class="tela">
+    <video class="video-player" controls>
+        <source src="Vídeo01.MOV" type="video/mp4">
+    </video>
+    <button class="btn-voltar" onclick="abrirTela('transmissoes')">&lt;&lt;&lt; TRANSMISSÕES</button>
+    <button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; INÍCIO</button>
+</div>
+
+<!-- PLAYER 2 -->
+
+<div id="video2" class="tela">
+    <video class="video-player" controls>
+        <source src="video02.mp4" type="video/mp4">
+    </video>
+    <button class="btn-voltar" onclick="abrirTela('transmissoes')">&lt;&lt;&lt; TRANSMISSÕES</button>
+    <button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; INÍCIO</button>
+</div>
+
+<!-- HISTÓRIA -->
+
+<div id="historia" class="tela">
+    <div class="historia-texto">
+        Um novo aplicativo se populariza entre o final de 2024 e 2025.<br><br>
+        No período letivo de 2026, uma "bomba explode".<br><br>
+        Uma nova infecção se espalha rapidamente, contaminando adultos e jovens de todo o país…<br>
+        E talvez do mundo inteiro?<br><br>
+        O colégio se torna um campo de guerra.<br>
+        Disputas entre os próprios estudantes… e contaminados altamente agressivos.<br><br>
+        Mas como começa essa infecção?<br>
+        Como resolver?<br>
+        Alguém ficará vivo?<br><br>
+        Algo poderá ser feito?
+    </div>
+    <button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; RETORNAR AO SINAL</button>
+</div>
+
+<!-- LOADING ENIGMAS (curto e misterioso) -->
+
+<div id="loadingEnigmas" class="tela">
+    <div class="loading-box">
+        <div class="loading-titulo">[ PROTOCOLO DESCONHECIDO ]</div>
+        <div id="textoEnigma"></div>
+        <div class="barra-container">
+            <div class="barra-progresso" id="barraEnigma"></div>
+        </div>
+        <div class="porcentagem" id="pctEnigma">0%</div>
+    </div>
+</div>
+
+<!-- ENIGMAS INDISPONÍVEL -->
+
+<div id="enigmas" class="tela">
+    <div class="erro">
+        &#9608;&#9608;&#9608; ACESSO BLOQUEADO &#9608;&#9608;&#9608;<br><br>
+        MÓDULO DE ENIGMAS OFFLINE.<br><br>
+        AGUARDE PRÓXIMA TRANSMISSÃO...
+    </div>
+    <button class="btn-voltar" onclick="voltar()">&lt;&lt;&lt; VOLTAR</button>
+</div>
+
+<!-- LOADING VÍDEO (curto) -->
+
+<div id="loadingVideo" class="tela">
+    <div class="loading-box">
+        <div class="loading-titulo">[ DECODIFICANDO SINAL ]</div>
+        <div id="textoVideo"></div>
+        <div class="barra-container">
+            <div class="barra-progresso" id="barraVideo"></div>
+        </div>
+        <div class="porcentagem" id="pctVideo">0%</div>
+    </div>
+</div>
+
+<script>
+
+// ==================== NAVEGAÇÃO ====================
+
+let timerErro = null;
+
+function abrirTela(id) {
+    const erro = document.getElementById("erroLogin");
+    if (erro) {
+        erro.style.display = "none";
+        if (timerErro) { clearTimeout(timerErro); timerErro = null; }
+    }
+
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+    document.getElementById(id).classList.add('ativa');
+
+    const btnIniciar = document.getElementById("btnIniciar");
+
+    if (id !== 'home') {
+        document.body.classList.add('blur-ativo');
+        btnIniciar.style.display = "none";
+    } else {
+        document.body.classList.remove('blur-ativo');
+        btnIniciar.style.display = "block";
+    }
+}
+
+function voltar() {
+    abrirTela('home');
+}
+
+// ==================== INICIAR TRANSMISSÃO ====================
+
+function iniciarSistema() {
+    const audio = document.getElementById("audioGlitch");
+    audio.volume = 0.5;
+    audio.play();
+
+    // vai direto para a tela de transmissões (botão volta ao retornar pro home)
+    abrirTela('transmissoes');
+}
+
+// ==================== VERIFICAR VÍDEO ====================
+
+function verificarVideo(inputId, senhaCorreta, destino) {
+    const valor = document.getElementById(inputId).value;
+    const num = inputId.slice(-1);
+    const erro = document.getElementById("erroCard" + num);
+
+    if (valor === senhaCorreta) {
+        iniciarLoadingVideo(destino);
+    } else {
+        erro.style.display = "block";
+        setTimeout(() => erro.style.display = "none", 2000);
+    }
+}
+
+// ==================== LOGIN ====================
+
+const perfis = [
+    { nome: "adm01", senha: "1234", destino: "perfil1" },
+    { nome: "adm02", senha: "abcd", destino: "perfil2" }
+];
+
+function logar() {
+    const nome = document.getElementById("nome").value.toLowerCase().trim();
+    const senha = document.getElementById("senha").value;
+    const perfil = perfis.find(p => p.nome === nome && p.senha === senha);
+
+    if (perfil) {
+        iniciarLoading(perfil.destino);
+    } else {
+        const erro = document.getElementById("erroLogin");
+        erro.style.display = "block";
+        if (timerErro) clearTimeout(timerErro);
+        timerErro = setTimeout(() => {
+            erro.style.display = "none";
+        }, 3000);
+    }
+}
+
+// ==================== LOADING 10 SEGUNDOS ====================
+
+const linhasLoading = [
+    "INICIANDO VARREDURA DO SISTEMA...",
+    "CONECTANDO AO SERVIDOR CENTRAL...",
+    "VERIFICANDO CREDENCIAIS...",
+    "DESCRIPTOGRAFANDO ARQUIVOS...",
+    "LOCALIZANDO REGISTRO DO PERSONAGEM...",
+    "CARREGANDO DADOS CLASSIFICADOS...",
+    "AUTENTICAÇÃO CONCLUÍDA.",
+    "ACESSO LIBERADO."
+];
+
+function iniciarLoading(destino) {
+    abrirTela("loading");
+
+    const textoEl = document.getElementById("textoLoading");
+    const barra = document.getElementById("barraProgresso");
+    const pct = document.getElementById("porcentagemTexto");
+
+    textoEl.innerHTML = "";
+    barra.style.width = "0%";
+    pct.textContent = "0%";
+
+    const totalMs = 10000; // 10 segundos
+    const intervaloLinha = totalMs / linhasLoading.length; // ~1250ms por linha
+    const intervaloBarra = 100; // atualiza barra a cada 100ms
+
+    let linhaAtual = 0;
+    let tempoPassado = 0;
+
+    // adiciona linhas progressivamente
+    const timerLinhas = setInterval(() => {
+        if (linhaAtual < linhasLoading.length) {
+            textoEl.innerHTML += linhasLoading[linhaAtual] + '<br>';
+            linhaAtual++;
+        }
+    }, intervaloLinha);
+
+    // atualiza barra de progresso
+    const timerBarra = setInterval(() => {
+        tempoPassado += intervaloBarra;
+        const porcentagem = Math.min(Math.round((tempoPassado / totalMs) * 100), 100);
+        barra.style.width = porcentagem + "%";
+        pct.textContent = porcentagem + "%";
+    }, intervaloBarra);
+
+    // após 10 segundos, vai para o perfil
+    setTimeout(() => {
+        clearInterval(timerLinhas);
+        clearInterval(timerBarra);
+        abrirTela(destino);
+    }, totalMs);
+}
+
+
+// ==================== LOADING VÍDEO (4 segundos) ====================
+
+const linhasVideo = [
+    "INTERCEPTANDO SINAL...",
+    "DECODIFICANDO FREQUÊNCIA...",
+    "DESCRIPTOGRAFANDO STREAM...",
+    "CONEXÃO ESTABELECIDA."
+];
+
+function iniciarLoadingVideo(destino) {
+    abrirTela("loadingVideo");
+
+    const textoEl = document.getElementById("textoVideo");
+    const barra = document.getElementById("barraVideo");
+    const pct = document.getElementById("pctVideo");
+
+    textoEl.innerHTML = "";
+    barra.style.width = "0%";
+    pct.textContent = "0%";
+
+    const totalMs = 4000;
+    const intervaloLinha = totalMs / linhasVideo.length;
+    const intervaloBarra = 100;
+
+    let linhaAtual = 0;
+    let tempoPassado = 0;
+
+    const timerLinhas = setInterval(() => {
+        if (linhaAtual < linhasVideo.length) {
+            textoEl.innerHTML += linhasVideo[linhaAtual] + '<br>';
+            linhaAtual++;
+        }
+    }, intervaloLinha);
+
+    const timerBarra = setInterval(() => {
+        tempoPassado += intervaloBarra;
+        const porcentagem = Math.min(Math.round((tempoPassado / totalMs) * 100), 100);
+        barra.style.width = porcentagem + "%";
+        pct.textContent = porcentagem + "%";
+    }, intervaloBarra);
+
+    setTimeout(() => {
+        clearInterval(timerLinhas);
+        clearInterval(timerBarra);
+        abrirTela(destino);
+    }, totalMs);
+}
+
+// ==================== LOADING ENIGMAS (6 segundos, misterioso) ====================
+
+const linhasEnigma = [
+    "01000101 01001110 01001001...",
+    "PROTOCOLO NÃO IDENTIFICADO.",
+    "TENTANDO ESTABELECER CONEXÃO...",
+    "SINAL CRIPTOGRAFADO DETECTADO...",
+    "&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;",
+    "ACESSO NEGADO."
+];
+
+function iniciarEnigmas() {
+    abrirTela("loadingEnigmas");
+
+    const textoEl = document.getElementById("textoEnigma");
+    const barra = document.getElementById("barraEnigma");
+    const pct = document.getElementById("pctEnigma");
+
+    textoEl.innerHTML = "";
+    barra.style.width = "0%";
+    pct.textContent = "0%";
+
+    const totalMs = 6000;
+    const intervaloLinha = totalMs / linhasEnigma.length;
+    const intervaloBarra = 100;
+
+    let linhaAtual = 0;
+    let tempoPassado = 0;
+
+    const timerLinhas = setInterval(() => {
+        if (linhaAtual < linhasEnigma.length) {
+            textoEl.innerHTML += linhasEnigma[linhaAtual] + '<br>';
+            linhaAtual++;
+        }
+    }, intervaloLinha);
+
+    const timerBarra = setInterval(() => {
+        tempoPassado += intervaloBarra;
+        const porcentagem = Math.min(Math.round((tempoPassado / totalMs) * 100), 100);
+        barra.style.width = porcentagem + "%";
+        pct.textContent = porcentagem + "%";
+    }, intervaloBarra);
+
+    setTimeout(() => {
+        clearInterval(timerLinhas);
+        clearInterval(timerBarra);
+        abrirTela('enigmas');
+    }, totalMs);
+}
+
+</script>
+
+</body>
+</html>
